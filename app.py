@@ -5,6 +5,7 @@ import random
 import configparser
 from flask import Flask, jsonify, request, Response
 from flask_basicauth import BasicAuth
+import json
 import requests
 import urllib.parse
 
@@ -188,9 +189,17 @@ def playback_list(camera_id):
         return jsonify({"error": "Not found"}), 404
 
     response = requests.get(f"http://{mediamtx_username}:{mediamtx_password}@localhost:{app_config_mediamtx_playback_port}/list?path={camera_id}")
-    response.raise_for_status()
+    json_response = json.loads(response.content)
 
-    return Response(response.content, response.status_code, content_type = response.headers['content-type'])
+    recordings = []
+    for record in json_response:
+        recording = {
+            "start": record["start"],
+            "duration": record["duration"]
+        }
+        recordings.append(recording)
+
+    return jsonify(recordings)
 
 @app.route('/api/camera/<string:camera_id>/playback/get', methods=['GET'])
 @basic_auth.required

@@ -112,12 +112,11 @@ user@nvr:~$ curl -X POST -u 'adminuser:adminpass' http://127.0.0.1:8080/api/came
 ## Api for MediaMTX Integration
 **List recordings**
 ```
-user@nvr:~$ curl "https://adminuser:adminpass@127.0.0.1:8080/api/camera/camera01/playback/list" | jq .
+user@nvr:~$ curl -u 'adminuser:adminpass' http://127.0.0.1:8080/api/camera/camera01/playback/list" | jq .
 [
   {
     "start": "2025-05-22T21:03:27.242037-03:00",
-    "duration": 45740.130479,
-    "url": "http://localhost:9996/get?duration=45740.130479&path=calle&start=2025-05-22T21%3A03%3A27.242037-03%3A00"
+    "duration": 45740.130479
   },
   {
     ...
@@ -127,7 +126,7 @@ user@nvr:~$ curl "https://adminuser:adminpass@127.0.0.1:8080/api/camera/camera01
 
 **Get recording**
 ```
-user@nvr:~$ curl "https://adminuser:adminpass@127.0.0.1:8080/api/camera/camera01/playback/get?start=2025-05-27T02:48:44-03:00&duration=60.0" -o recording.mp4
+user@nvr:~$ curl 'adminuser:adminpass' http://127.0.0.1:8080/api/camera/camera01/playback/get?start=2025-05-27T02:48:44-03:00&duration=60.0" -o recording.mp4
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100 4834k  100 4834k    0     0   392k      0  0:00:12  0:00:12 --:--:-- 1089k
