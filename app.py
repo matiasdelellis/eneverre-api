@@ -23,10 +23,12 @@ app_config_user = config['server']['username']
 app_config_pass = config['server']['password']
 app_config_port = config['server']['port']
 
-app_config_mediamtx_server = config['server'].get('mediamtx_server', None)
-app_config_mediamtx_rtsp_port = config['server'].get('mediamtx_rtsp_port', "8554")
-app_config_mediamtx_playback_port = config['server'].get('mediamtx_playback_port', "9996")
-
+if config.has_section('mediamtx'):
+    app_config_mediamtx_server = config['mediamtx'].get('server', None)
+    app_config_mediamtx_rtsp_port = config['mediamtx'].get('rtsp_port', "8554")
+    app_config_mediamtx_playback_port = config['mediamtx'].get('playback_port', "9996")
+else:
+    app_config_mediamtx_server = None
 
 """
 Helpers for MediaMTX integration.
