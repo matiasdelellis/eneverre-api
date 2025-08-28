@@ -62,6 +62,15 @@ def has_playback(camera):
 
 
 """
+Helpers for thingino websockets protocol
+"""
+def thingino_ws_privacy(uri, enable):
+    enabled = "true" if enable else "false"
+    msg = "'{\"privacy\":{\"enabled\":" + enabled + "}, \"action\":{\"restart_thread\":14},\"action\":{\"save_config\":null}}'"
+    cmd = f"echo {msg} | websocat -n1 {uri}"
+    return subprocess.check_output(cmd, shell=True)
+
+"""
 Get the list of cameras
 """
 cameras_folder = './cameras.d'
@@ -81,6 +90,7 @@ for filename in os.listdir(cameras_folder):
         "playback": has_playback(camera_conf),
         "ptz": camera_conf.getboolean('ptz', False),
         "height": camera_conf['height'],
+        "thingino_ws_uri": camera_conf.get('thingino_ws_uri', None),
         "privacy": False
     }
     cameras.append(camera)
@@ -138,6 +148,9 @@ def privacy_camera(camera_id):
     enable = (request.args.get('enable') == 'true')
 
     camera['privacy'] = enable
+
+    if camera['thingino_ws_uri'] is not None:
+        thingino_ws_privacy(camera['thingino_ws_uri'], enable)
 
     if not camera['ptz']:
         return jsonify(camera)
