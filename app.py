@@ -5,6 +5,7 @@ import random
 import configparser
 from flask import Flask, jsonify, request, Response
 from flask_basicauth import BasicAuth
+from flask_cors import CORS
 import json
 import requests
 import urllib.parse
@@ -26,9 +27,11 @@ app_config_port = config['server']['port']
 if config.has_section('mediamtx'):
     app_config_mediamtx_server = config['mediamtx'].get('server', None)
     app_config_mediamtx_rtsp_port = config['mediamtx'].get('rtsp_port', "8554")
+    app_config_mediamtx_hls_port = config['mediamtx'].get('hls_port', "8888")
     app_config_mediamtx_playback_port = config['mediamtx'].get('playback_port', "9996")
 else:
     app_config_mediamtx_server = None
+
 
 """
 Helpers for MediaMTX integration.
@@ -53,6 +56,20 @@ def get_live_url(camera):
 
     camera_id = camera['id']
     return f"rtsp://{mediamtx_username}:{mediamtx_password}@{app_config_mediamtx_server}:{app_config_mediamtx_rtsp_port}/{camera_id}"
+
+def get_hls_live_url(camera):
+    if app_config_mediamtx_server is None:
+        return ""
+
+    camera_id = camera['id']
+    return f"http://{mediamtx_username}:{mediamtx_password}@{app_config_mediamtx_server}:{app_config_mediamtx_hls_port}/{camera_id}/index.m3u8"
+
+def get_hls_thumb_url(camera):
+    if app_config_mediamtx_server is None:
+        return ""
+
+    camera_id = camera['id']
+    return f"http://{mediamtx_username}:{mediamtx_password}@{app_config_mediamtx_server}:{app_config_mediamtx_hls_port}/{camera_id}_lq/index.m3u8"
 
 def has_playback(camera):
     if app_config_mediamtx_server is None:
@@ -86,6 +103,8 @@ for filename in os.listdir(cameras_folder):
         "name": camera_conf['name'],
         "comment": camera_conf['comment'],
         "live": get_live_url(camera_conf),
+        "hls": get_hls_live_url(camera_conf),
+        "hls_thumb": get_hls_thumb_url(camera_conf),
         "width": camera_conf['width'],
         "playback": has_playback(camera_conf),
         "ptz": camera_conf.getboolean('ptz', False),
@@ -95,9 +114,6 @@ for filename in os.listdir(cameras_folder):
     }
     cameras.append(camera)
 
-print("Cameras folder: " + cameras_folder)
-print ("Found " + str(len(cameras)) + " cameras")
-
 
 """
 And here is the API..
@@ -106,6 +122,7 @@ app = Flask(__name__)
 app.config['BASIC_AUTH_USERNAME'] = app_config_user
 app.config['BASIC_AUTH_PASSWORD'] = app_config_pass
 basic_auth = BasicAuth(app)
+CORS(app)
 
 
 @app.route('/api')
@@ -116,7 +133,10 @@ def hello_world():
 @app.route('/api/cameras', methods=['GET'])
 @basic_auth.required
 def get_cameras():
-    return jsonify(cameras)
+    response = cameras
+    for camera in response:
+        del camera['thingino_ws_uri']
+    return jsonify(response)
 
 
 """
@@ -261,4 +281,4 @@ def playback_get(camera_id):
 Run flask server...
 """
 if __name__ == "__main__":
-    app.run(port=app_config_port, debug=True)
+    app.run(port=app_config_port)
