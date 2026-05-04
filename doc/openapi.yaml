@@ -1,0 +1,260 @@
+openapi: 3.0.3
+
+info:
+  title: Enverre NVR API
+  version: 1.0.0
+  description: |
+    API para gestión de cámaras, streaming y playback.
+    
+    Flujo típico:
+    1. GET /api/cameras
+    2. Elegir cámara (playback=true si querés grabaciones)
+    3. GET /api/camera/{id}/playback/list
+    4. GET /api/camera/{id}/playback/get
+
+servers:
+  - url: http://localhost:8080
+
+security:
+  - basicAuth: []
+
+paths:
+  /api/cameras:
+    get:
+      summary: Listar cámaras
+      responses:
+        '200':
+          description: Lista de cámaras
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Camera'
+
+  /api/camera/{camera_id}/ptz:
+    post:
+      summary: Mover cámara (PTZ)
+      parameters:
+        - $ref: '#/components/parameters/camera_id'
+        - name: x
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: y
+          in: query
+          schema:
+            type: integer
+          example: -1
+      responses:
+        '200':
+          description: Resultado del movimiento
+          content:
+            application/json:
+              schema:
+                type: object
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/camera/{camera_id}/privacy:
+    post:
+      summary: Activar/desactivar modo privacidad
+      parameters:
+        - $ref: '#/components/parameters/camera_id'
+        - name: enable
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Estado de la cámara
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Camera'
+
+  /api/camera/{camera_id}/playback/list:
+    get:
+      summary: Listar grabaciones
+      parameters:
+        - $ref: '#/components/parameters/camera_id'
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          example: "2026-05-04T10:00:00Z"
+        - name: end
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          example: "2026-05-04T11:00:00Z"
+      responses:
+        '200':
+          description: Segmentos de grabación
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recording'
+              examples:
+                example:
+                  value:
+                    - start: "2026-05-04T10:00:00Z"
+                      duration: 60
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/camera/{camera_id}/playback/get:
+    get:
+      summary: Obtener video grabado
+      parameters:
+        - $ref: '#/components/parameters/camera_id'
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: duration
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Stream de video (MP4)
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/auth:
+    post:
+      summary: Autenticación para MediaMTX
+      description: |
+        Endpoint usado por MediaMTX para validar credenciales RTSP/HLS.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+components:
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  parameters:
+    camera_id:
+      name: camera_id
+      in: path
+      required: true
+      schema:
+        type: string
+      example: "interior"
+
+  schemas:
+
+    Camera:
+      type: object
+      required:
+        - id
+        - name
+        - live
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        comment:
+          type: string
+        location:
+          type: string
+        live:
+          type: string
+          description: URL RTSP
+        hls:
+          type: string
+        hls_thumb:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        playback:
+          type: boolean
+        ptz:
+          type: boolean
+        privacy:
+          type: boolean
+
+    Recording:
+      type: object
+      properties:
+        start:
+          type: string
+          format: date-time
+        duration:
+          type: number
+
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+
+  responses:
+
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+
+    BadRequest:
+      description: Request inválido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
