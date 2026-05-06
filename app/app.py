@@ -9,6 +9,7 @@ from app.routes.ptz import bp as ptz_bp
 from app.routes.playback import bp as playback_bp
 from app.routes.auth_api import bp as auth_api_bp
 from app.routes.users import bp as users_bp
+from app.routes.device_auth import bp as device_auth_bp
 
 init_db()
 
@@ -19,6 +20,8 @@ app.register_blueprint(cameras_bp)
 app.register_blueprint(ptz_bp)
 app.register_blueprint(playback_bp)
 app.register_blueprint(auth_api_bp)
+app.register_blueprint(device_auth_bp)
+
 app.register_blueprint(users_bp)
 
 app.teardown_appcontext(close_db)

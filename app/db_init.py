@@ -23,6 +23,24 @@ def init_db():
         )
     """)
 
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS device_login (
+            device_code TEXT PRIMARY KEY,
+            user_code TEXT,
+            status TEXT,
+            username TEXT,
+            expires_at INTEGER
+        )
+    """)
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS tokens (
+            token TEXT PRIMARY KEY,
+            username TEXT,
+            expires_at INTEGER
+        )
+    """)
+
     # Init users if needed
     count = cur.execute("SELECT COUNT(*) FROM users").fetchone()[0]
 
