@@ -7,14 +7,18 @@ mediaMTX is optional and allows us to play recordings.
 
 ```
 [server]
-username = adminuser
-password = adminpass
+username = Admin
+password = eneverre
 port = 8080
 
-;mediamtx_server = mediamtx.server.com
-;mediamtx_rtsp_port' = 8554
-;mediamtx_playback_port = 9996
+;[mediamtx]
+;server = mediamtx.server.com
+;rtsp_port = 8554
+;playback_port = 9996
 ```
+
+The first time the service runs, it creates the administrator user according to this
+configuration. This user configuration can then be removed.
 
 ## [camera_name].ini
 To add cameras you must add their definition to ini files inside the
@@ -32,11 +36,11 @@ width = 1920
 height = 1080
 ```
 
-## The most relevant:
+### The most relevant:
  * **id:** Id of camera that match with MediaMTX if use this integration.
  * **name:** Friendly info
  * **comment:** Friendly info
- * **live:* This is the public URL for playing the camera. Security here is the
+ * **live:** This is the public URL for playing the camera. Security here is the
    responsibility of mediaMTX, go2rtc, or lightNVR. In particular, if you use
    the integration with MediaMTX, this option is ignored since it will be
    dynamically generated with the configuration and a random username and
