@@ -1,11 +1,11 @@
 import os, configparser
 
-from app.config import MEDIAMTX
+from app.config import MEDIAMTX, CAMERAS_FOLDER
 from app.services.mediamtx_service import rtsp_url, hls_url, hls_thumb_url
 
 
 def load_cameras():
-    folder = '/etc/eneverre/cameras.d' if os.path.exists('/etc/eneverre/cameras.d') else './data/cameras.d'
+    folder = CAMERAS_FOLDER
     config = configparser.ConfigParser()
 
     cams = []

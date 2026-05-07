@@ -4,6 +4,7 @@ from flask_cors import CORS
 from app.db import close_db
 from app.db_init import init_db
 
+from app.routes.health import bp as health_bp
 from app.routes.cameras import bp as cameras_bp
 from app.routes.ptz import bp as ptz_bp
 from app.routes.playback import bp as playback_bp
@@ -16,6 +17,7 @@ init_db()
 app = Flask(__name__)
 CORS(app)
 
+app.register_blueprint(health_bp)
 app.register_blueprint(cameras_bp)
 app.register_blueprint(ptz_bp)
 app.register_blueprint(playback_bp)
