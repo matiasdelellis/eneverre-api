@@ -34,7 +34,7 @@ def playback_list(cam_id):
     r = requests.get(
         url,
         auth=(creds["username"], creds["password"]),
-        timeout=5
+        timeout=10
     )
 
     return jsonify([
@@ -73,7 +73,7 @@ def playback_get(cam_id):
         url,
         stream=True,
         auth=(creds["username"], creds["password"]),
-        timeout=5
+        timeout=10
     )
 
     return Response(
