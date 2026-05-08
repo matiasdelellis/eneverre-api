@@ -11,3 +11,10 @@ The main idea is to reuse existing services. For example, I don't want to write 
 * [Eneverre Android](https://github.com/matiasdelellis/eneverre-android): This is the official Android client. You can view live cameras, recordings, and control PTZ cameras.
 * [Eneverre TV](https://github.com/matiasdelellis/eneverre-tv): Client for Android TVs. For now, can only view the live stream.
 * [Eneverre Web](https://github.com/matiasdelellis/eneverre-web): Under development, and you can see the cameras and fully control it.
+
+## Screenshots 😍
+
+Login | Cameras View | Pip Camera | PTZ Camera | Private Camera | Playback
+-- | -- | -- | -- | -- | --
+![](https://raw.githubusercontent.com/matiasdelellis/eneverre-docs/refs/heads/main/images/android/eneverre-login.png) | ![](https://raw.githubusercontent.com/matiasdelellis/eneverre-docs/refs/heads/main/images/android/cameras-list.png) | ![](https://raw.githubusercontent.com/matiasdelellis/eneverre-docs/refs/heads/main/images/android/pip-camera.png) | ![](https://raw.githubusercontent.com/matiasdelellis/eneverre-docs/refs/heads/main/images/android/ptz-camera.png) | ![](https://raw.githubusercontent.com/matiasdelellis/eneverre-docs/refs/heads/main/images/android/privacy.png) | ![](https://raw.githubusercontent.com/matiasdelellis/eneverre-docs/refs/heads/main/images/android/playback.png)
+
