@@ -110,7 +110,7 @@ def verify_device():
     ).fetchone()
 
     if not row:
-        return jsonify({"error": "Invalid user_code"}), 404
+        return jsonify({"status": "invalid"}), 200
 
     status, username, expires_at = row
 
