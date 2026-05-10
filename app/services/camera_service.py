@@ -6,11 +6,11 @@ from app.services.mediamtx_service import rtsp_url, hls_url, hls_thumb_url
 
 def load_cameras():
     folder = CAMERAS_FOLDER
-    config = configparser.ConfigParser()
 
     cams = []
 
     for file in os.listdir(folder):
+        config = configparser.ConfigParser()
         config.read(os.path.join(folder, file))
 
         cam = config['camera']
