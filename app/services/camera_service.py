@@ -1,7 +1,7 @@
 import os, configparser
 
 from app.config import MEDIAMTX, CAMERAS_FOLDER
-from app.services.mediamtx_service import rtsp_url, hls_url, hls_thumb_url
+from app.services.mediamtx_service import rtsp_url, hls_url
 
 
 def load_cameras():
@@ -22,11 +22,9 @@ def load_cameras():
             server = MEDIAMTX.get('server')
             live = rtsp_url(server, MEDIAMTX.get('rtsp_port', '8554'), cam_id)
             hls = hls_url(server, cam_id)
-            hls_thumb = hls_thumb_url(server, cam_id)
         else:
-            live = cam['live']
-            hls = ""
-            hls_thumb = ""
+            live = cam.get('live', '')
+            hls = cam.get('hls', '')
 
         cams.append({
             "id": cam_id,
@@ -35,7 +33,6 @@ def load_cameras():
             "location": cam.get('location', ''),
             "live": live,
             "hls": hls,
-            "hls_thumb": hls_thumb,
             "width": int(cam.get('width', 0)),
             "height": int(cam.get('height', 0)),
 

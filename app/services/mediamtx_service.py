@@ -29,6 +29,3 @@ def rtsp_url(server, port, cam_id):
 
 def hls_url(server, cam_id):
     return f"https://{creds['username']}:{creds['password']}@{server}/hls/{cam_id}/index.m3u8"
-
-def hls_thumb_url(server, cam_id):
-    return f"https://{creds['username']}:{creds['password']}@{server}/hls/{cam_id}_lq/index.m3u8"
