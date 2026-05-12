@@ -4,6 +4,7 @@ from app.services.camera_service import load_cameras, get_camera
 from app.services.thingino_service import move
 
 bp = Blueprint('ptz', __name__)
+
 cameras = load_cameras()
 
 @bp.route('/api/camera/<cam_id>/ptz', methods=['POST'])
@@ -20,4 +21,7 @@ def ptz(cam_id):
     except:
         return jsonify({"error": "Invalid params"}), 400
 
-    return jsonify(move(cam, x, y))
+    host = camera['thingino_url']
+    api_key = camera['thingino_api_key']
+
+    return jsonify(move(host, api_key, x, y))
