@@ -21,9 +21,11 @@ def load_cameras():
         if MEDIAMTX:
             server = MEDIAMTX.get('server')
             live = rtsp_url(server, MEDIAMTX.get('rtsp_port', '8554'), cam_id)
+            rtsp = rtsp_url(server, MEDIAMTX.get('rtsp_port', '8554'), cam_id)
             hls = hls_url(server, cam_id)
         else:
             live = cam.get('live', '')
+            rtsp = cam.get('live', '')
             hls = cam.get('hls', '')
 
         cams.append({
@@ -32,6 +34,7 @@ def load_cameras():
             "comment": cam.get('comment', ''),
             "location": cam.get('location', ''),
             "live": live,
+            "rtsp": live,
             "hls": hls,
             "width": int(cam.get('width', 0)),
             "height": int(cam.get('height', 0)),
